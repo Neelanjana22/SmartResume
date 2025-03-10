@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Resume Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <nav class="dashboard-nav">
+            <h1>Welcome, {{ name }}!</h1>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="resume-form-container">
+            <form method="POST" class="resume-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required value="{{ form_data.name if form_data else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" required value="{{ form_data.phone if form_data else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required value="{{ form_data.email if form_data else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="linkedin">LinkedIn Profile</label>
+                    <input type="text" id="linkedin" name="linkedin" required value="{{ form_data.linkedin if form_data else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="job_role">Job Role</label>
+                    <select id="job_role" name="job_role">
+                        <option value="Software Engineer" {% if form_data and form_data.job_role == 'Software Engineer' %}selected{% endif %}>Software Engineer</option>
+                        <option value="Data Analyst" {% if form_data and form_data.job_role == 'Data Analyst' %}selected{% endif %}>Data Analyst</option>
+                        <option value="Product Manager" {% if form_data and form_data.job_role == 'Product Manager' %}selected{% endif %}>Product Manager</option>
+                        <option value="Web Developer" {% if form_data and form_data.job_role == 'Web Developer' %}selected{% endif %}>Web Developer</option>
+                        <option value="UX Designer" {% if form_data and form_data.job_role == 'UX Designer' %}selected{% endif %}>UX Designer</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="education">Education</label>
+                    <input type="text" id="education" name="education" required value="{{ form_data.education if form_data else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="experience">Experience</label>
+                    <input type="text" id="experience" name="experience" value="{{ form_data.experience if form_data else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="skills">Skills</label>
+                    <input type="text" id="skills" name="skills" required value="{{ form_data.skills if form_data else '' }}">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Generate Resume</button>
+            </form>
+        </div>
+
+        {% if resume %}
+            <div class="generated-resume">
+                <h2>Generated Resume</h2>
+                <div class="resume-content">
+                    {{ resume | safe | replace('\n', '<br>') | safe }}
+                </div>
+                <button class="btn btn-primary" onclick="window.print()">Print Resume</button>
+                <a href="{{ url_for('download_resume') }}" class="btn btn-success" style="margin-left: 10px;">
+                    Download Resume as PDF
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>
